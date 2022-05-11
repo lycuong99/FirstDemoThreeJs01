@@ -1,0 +1,12 @@
+ul {
+  color: white;
+  font-family: sans-serif;
+}
+h1 {
+  font-family: sans-serif;
+  mix-blend-mode: difference;
+  color: white;
+}
+main {
+  position: fixed;
+}

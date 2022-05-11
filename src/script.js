@@ -1,15 +1,16 @@
 import './style.css'
 
 import * as THREE from 'three';
-import { OrbitControls } from "./OrbitControls";
-import { GLTFLoader } from "./GLTFLoader";
+    import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { ArcballControls } from "three/examples/jsm/controls/ArcballControls";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 // SCENE
 const scene = new THREE.Scene();
 
 // CAMERA
 const camera = new THREE.PerspectiveCamera(
-    75,
+    100,
     window.innerWidth / window.innerHeight,
     0.1,
     1000
@@ -79,6 +80,10 @@ Array(200).fill().forEach(addStar);
 
 // CONTROL
 let controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+
+// let controls = new THREE.DeviceOrient
 // CUBE
 //   GEO1
 let geometry = new THREE.BoxGeometry(5, 5, 5); // size of box
