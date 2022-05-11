@@ -1,7 +1,7 @@
 import './style.css'
 
 import * as THREE from 'three';
-    import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { ArcballControls } from "three/examples/jsm/controls/ArcballControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
@@ -26,13 +26,16 @@ const renderer = new THREE.WebGLRenderer();
 window.addEventListener("resize", function () {
     let width = window.innerWidth;
     let height = window.innerHeight;
-    
+
     renderer.setSize(width, height);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
 });
 
 renderer.setSize(window.innerWidth, window.innerHeight);
+// console.log(renderer.pixelRatio)
+// console.log(window.devicePixelRatio)
+renderer.setPixelRatio(window.devicePixelRatio)
 document.body.appendChild(renderer.domElement);
 
 // SET UP LIGHT
