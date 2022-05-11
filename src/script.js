@@ -2,11 +2,30 @@ import './style.css'
 
 import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { ArcballControls } from "three/examples/jsm/controls/ArcballControls";
+
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import * as dat from 'dat.gui';
+
+
+// DEGUB UI
+const datGui = new dat.GUI({ width: 300, closeOnTop: true, });
+
+const parameters = {
+    bgColor: 0x101011,
+    snowColor: 0xfadaff,
+    speedSnowDrop: 0.1
+}
+datGui.add(parameters, 'speedSnowDrop').min(-1).max(1).step(0.05)
 
 // SCENE
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(parameters.bgColor);
+
+datGui.addColor(parameters, 'bgColor').onChange(() => {
+    scene.background = new THREE.Color(parameters.bgColor);
+})
+
+const canvas = document.querySelector('.webgl-render');
 
 // CAMERA
 const camera = new THREE.PerspectiveCamera(
@@ -20,7 +39,7 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(20, 10, 20);
 
 // RENDERER
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ canvas: canvas });
 
 //   Auto resize CANVANS when responsive
 window.addEventListener("resize", function () {
@@ -28,14 +47,36 @@ window.addEventListener("resize", function () {
     let height = window.innerHeight;
 
     renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
 });
 
+window.addEventListener('dblclick', () => {
+    const fullScreenElement = document.fullscreenElement || document.webkitFullscreenElement
+
+    if (!fullScreenElement) {
+        if (canvas.requestFullscreen) {
+            canvas.requestFullscreen()
+        } else if (canvas.webkitRequestFullscreen) {
+            canvas.webkitRequestFullscreen()
+        }
+
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen()
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen()
+        }
+
+    }
+})
+
 renderer.setSize(window.innerWidth, window.innerHeight);
 // console.log(renderer.pixelRatio)
 // console.log(window.devicePixelRatio)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
 document.body.appendChild(renderer.domElement);
 
 // SET UP LIGHT
@@ -57,11 +98,11 @@ const render = function () {
 // CREATE STAR
 
 let stars = [];
+const snowMaterial = new THREE.MeshPhongMaterial({ color: parameters.snowColor });
 
 function addStar() {
     const g = new THREE.SphereGeometry(0.25);
-    const material = new THREE.MeshPhongMaterial({ color: 0xfadaff });
-    const star = new THREE.Mesh(g, material);
+    const star = new THREE.Mesh(g, snowMaterial);
     const [x, y, z] = Array(3)
         .fill()
         .map(() => THREE.MathUtils.randFloatSpread(100));
@@ -72,18 +113,32 @@ function addStar() {
 }
 
 function updateStar(star) {
-    if (star.position.y < -1) {
-        star.position.y = THREE.MathUtils.randFloatSpread(70);
+    if (parameters.speedSnowDrop > 0) {
+        if (star.position.y < -1) {
+            star.position.y = THREE.MathUtils.randFloatSpread(70);
+        } else {
+            star.position.y -= parameters.speedSnowDrop;
+            // star.position.x -= 1;
+        }
     } else {
-        star.position.y -= 0.1;
-        // star.position.x -= 1;
+        if (star.position.y > 50) {
+            star.position.y = 0;
+        } else {
+            star.position.y -= parameters.speedSnowDrop;
+            // star.position.x -= 1;
+        }
     }
+
 }
 
 Array(200).fill().forEach(addStar);
 
+// DEBUG SNOW
+datGui.addColor(parameters, 'snowColor').onChange((e) => {
+    snowMaterial.color.set(parameters.snowColor)
+})
 // CONTROL
-let controls = new OrbitControls(camera, renderer.domElement);
+let controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 
 
