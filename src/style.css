@@ -9,4 +9,15 @@ h1 {
 }
 main {
   position: fixed;
+  z-index: 2;
+  padding: 12px;
+}
+* {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  position: fixed;
+  z-index: 1;
 }
