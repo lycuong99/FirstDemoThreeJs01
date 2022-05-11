@@ -35,7 +35,7 @@ window.addEventListener("resize", function () {
 renderer.setSize(window.innerWidth, window.innerHeight);
 // console.log(renderer.pixelRatio)
 // console.log(window.devicePixelRatio)
-renderer.setPixelRatio(window.devicePixelRatio)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 document.body.appendChild(renderer.domElement);
 
 // SET UP LIGHT
